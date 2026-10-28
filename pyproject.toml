@@ -15,9 +15,9 @@ keywords = ["llm", "chat", "logs", "cli", "local-ai", "local-first"]
 [project.scripts]
 chat-stats = "chat_stats:main"
 
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["chat_stats*"]
+[tool.setuptools]
+py-modules = ["chat_stats"]
+include-package-data = true
 
 [tool.setuptools.package-data]
-"" = ["LICENSE", "README.md"]
+"*" = ["LICENSE", "README.md"]

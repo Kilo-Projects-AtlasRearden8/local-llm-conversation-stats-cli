@@ -1,9 +1,9 @@
 # Local LLM Conversation Stats CLI
 
-A local-first, dependency-free Python CLI that analyzes your local LLM chat
-logs and reports message counts, token estimates, top topics, and daily
-activity summaries. Reads local JSON files only — no API keys, no network,
-no accounts, and nothing ever leaves your machine.
+A local-first, dependency-free Python CLI that reads your local LLM chat logs
+and reports message counts, token estimates, top topics, and daily activity
+summaries. No API keys, no network, no accounts — nothing ever leaves your
+machine.
 
 Built by **Dylan Asdale**, registered nurse turned AI author and founder of
 **Asdale Dynamics, LLC** (Indiana, formed October 2026). Asdale Dynamics
@@ -13,50 +13,70 @@ dylanasdale.github.io.
 
 ## Who this is for
 
-Anyone keeping local LLM conversations who wants a quick, plain-English look
-at their activity: how many messages, roughly how many tokens, what topics
-come up most, and which days were busiest. No sign-up, no subscription, no
-cloud upload.
+You keep local conversations with a local LLM (Ollama, llama.cpp, or similar)
+and you'd like a plain-English look at your activity:
+
+- How many messages have I exchanged?
+- Roughly how many tokens is that?
+- What topics come up most often?
+- Which days were my busiest?
+
+No sign-up, no subscription, no cloud upload. This tool is for anyone who
+wants a quick, honest picture of their own local AI use.
 
 ## Features
 
 - **Message counts** — total messages and a breakdown by role (user,
   assistant, system, tool).
-- **Token estimates** — approximate token count using a ~4 chars-per-token
-  heuristic (estimate only; real tokenizers vary by model).
-- **Top topics** — most frequent words across your messages, with common
-  stop words filtered out.
+- **Token estimates** — approximate token count using a ~4
+  characters-per-token heuristic. This is an estimate only; real tokenizers
+  vary by model.
+- **Top topics** — the most frequent words across your messages, with common
+  stop words filtered out so real topics bubble up.
 - **Daily activity** — messages and estimated tokens grouped by day.
 - **Two output formats** — human-readable text or machine-readable JSON.
-- **Zero dependencies** — Python standard library only. Runs offline.
+- **Zero dependencies** — Python standard library only. Runs fully offline.
 
 ## Installation
 
-No install required. Clone or copy this folder and run with Python 3.8+:
+No install required. Just grab `chat_stats.py` and run it with Python 3.8+:
 
 ```bash
-python chat_stats.py path/to/chat-log.json
+python3 chat_stats.py path/to/chat-log.json
+```
+
+If you'd rather install it as a command:
+
+```bash
+pip3 install -e .
+chat-stats path/to/chat-log.json
 ```
 
 ## Usage
 
 ```bash
-# Human-readable summary
-python chat_stats.py chat_log.json
+# Human-readable summary (default)
+python3 chat_stats.py chat_log.json
 
-# JSON output (useful for scripting or spreadsheets)
-python chat_stats.py chat_log.json --output json
+# JSON output (handy for scripts or spreadsheets)
+python3 chat_stats.py chat_log.json --output json
 
 # Show only the top 5 topics
-python chat_stats.py chat_log.json --top-topics 5
+python3 chat_stats.py chat_log.json --top-topics 5
 
 # Combine options
-python chat_stats.py chat_log.json --output json --top-topics 20
+python3 chat_stats.py chat_log.json --output json --top-topics 20
 ```
 
 ## Expected JSON input
 
-A list of messages, or an object with a `"messages"` key:
+The tool reads a JSON file that is either:
+
+- a list of message objects, or
+- an object with a `"messages"` key
+
+Each message may include `role`, `content`, and an optional ISO-8601
+`timestamp` (only the date is used for daily grouping):
 
 ```json
 [
@@ -65,8 +85,8 @@ A list of messages, or an object with a `"messages"` key:
 ]
 ```
 
-Each message may include `role`, `content`, and an optional ISO-8601
-`timestamp` (only the date is used for daily grouping).
+Missing fields are handled gracefully: a missing `role` becomes `"unknown"`,
+and a missing `content` is treated as empty.
 
 ## Example output
 
@@ -89,20 +109,20 @@ Top topics (top 10):
 
 Daily activity:
   2026-10-25: 6 message(s), 480 estimated token(s)
-  2026-10-24: 4 message(s, 320 estimated token(s)
+  2026-10-24: 4 message(s), 320 estimated token(s)
 ```
 
 ## Tests
 
 ```bash
-python -m pytest tests/
+python3 -m pytest tests/
 # or, without pytest:
-python -m unittest discover -s tests
+python3 -m unittest discover -s tests
 ```
 
-All tests cover parsing (list shape, dict-with-messages shape, missing file,
-bad JSON, null content), message counts, token estimates, top topics, daily
-activity, empty logs, and both output formats.
+All 22 tests cover parsing (list shape, dict-with-messages shape, missing
+file, bad JSON, null content), message counts, token estimates, top topics,
+daily activity, empty logs, and both output formats.
 
 ## License
 
